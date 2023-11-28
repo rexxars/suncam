@@ -1,0 +1,45 @@
+{
+  "name": "@rexxars/suncam",
+  "version": "1.0.0",
+  "description": "Daemon that figures out when the next sunrise, sunset and solar noon is, grabs a picture from an URL and uploads to Google Cloud Storage",
+  "main": "lib/index.js",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/daemon.ts | pino-pretty",
+    "start": "node lib/daemon.js",
+    "test": "echo \"No test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/rexxars/suncam.git"
+  },
+  "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rexxars/suncam/issues"
+  },
+  "homepage": "https://github.com/rexxars/suncam#readme",
+  "dependencies": {
+    "@google-cloud/storage": "^7.6.0",
+    "pino": "^8.15.1",
+    "undici": "^5.28.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.1",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-sanity": "^7.0.1",
+    "pino-pretty": "^10.2.0",
+    "prettier": "^3.0.3",
+    "tsx": "^4.6.0",
+    "typescript": "^5.2.2"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "bracketSpacing": false
+  }
+}

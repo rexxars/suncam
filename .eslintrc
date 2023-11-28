@@ -1,0 +1,9 @@
+{
+  "extends": ["sanity", "sanity/typescript", "prettier"],
+  "env": {"node": true, "browser": false},
+  "parserOptions": {"ecmaVersion": 2023},
+  "rules": {
+    "dot-notation": "off",
+    "no-dupe-class-members": "off"
+  }
+}
