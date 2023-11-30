@@ -14,37 +14,33 @@ scheduleTasks()
 async function scheduleTasks(date: Date = new Date()) {
   logger.info('Scheduling tasks for %s', date.toISOString().slice(0, 10))
 
-  try {
-    const {sunrise, sunset, solarNoon} = await getSunTimes(
-      config.latitude,
-      config.longitude,
-      date,
-    )
+  const {sunrise, sunset, solarNoon} = await getSunTimes(
+    config.latitude,
+    config.longitude,
+    date,
+  )
 
-    const sunriseOffset = config.secondOffset
-    const sunriseMs = calculateTimeout(sunrise, sunriseOffset)
-    logger.info('Sunrise at %s (in %s)', sunrise, formatMs(sunriseMs))
-    schedule(() => fetchAndUploadImage('sunrise'), sunriseMs)
+  const sunriseOffset = config.secondOffset
+  const sunriseMs = calculateTimeout(sunrise, sunriseOffset)
+  logger.info('Sunrise at %s (in %s)', sunrise, formatMs(sunriseMs))
+  schedule(() => fetchAndUploadImage('sunrise'), sunriseMs)
 
-    const solarNoonMs = calculateTimeout(solarNoon)
-    logger.info('Solar noon at %s (in %s)', solarNoon, formatMs(solarNoonMs))
-    schedule(() => fetchAndUploadImage('solarNoon'), solarNoonMs)
+  const solarNoonMs = calculateTimeout(solarNoon)
+  logger.info('Solar noon at %s (in %s)', solarNoon, formatMs(solarNoonMs))
+  schedule(() => fetchAndUploadImage('solarNoon'), solarNoonMs)
 
-    const sunsetOffset = 0 - config.secondOffset
-    const sunsetMs = calculateTimeout(sunset, sunsetOffset)
-    logger.info('Sunset at %s (in %s)', sunset, formatMs(sunsetMs))
-    schedule(() => fetchAndUploadImage('sunset'), sunsetMs)
+  const sunsetOffset = 0 - config.secondOffset
+  const sunsetMs = calculateTimeout(sunset, sunsetOffset)
+  logger.info('Sunset at %s (in %s)', sunset, formatMs(sunsetMs))
+  schedule(() => fetchAndUploadImage('sunset'), sunsetMs)
 
-    // Schedule for the next day
-    const nextDay = new Date(date)
-    nextDay.setDate(date.getDate() + 1)
+  // Schedule for the next day
+  const nextDay = new Date(date)
+  nextDay.setDate(date.getDate() + 1)
 
-    // Do another scheduling 30 minutes after sunset
-    const nextScheduleMs = calculateTimeout(sunset) + 30 * 60 * 1000
-    schedule(() => scheduleTasks(nextDay), nextScheduleMs)
-  } catch (error) {
-    logger.error('Error in scheduling tasks:', error)
-  }
+  // Do another scheduling 30 minutes after sunset
+  const nextScheduleMs = calculateTimeout(sunset) + 30 * 60 * 1000
+  schedule(() => scheduleTasks(nextDay), nextScheduleMs)
 }
 
 function schedule(fn: () => any, timeoutMs: number) {
