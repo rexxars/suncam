@@ -79,8 +79,10 @@ function calculateTimeout(targetTimeUTC: string, secondOffset = 0): number {
 
 function formatMs(numMs: number): string {
   let ms = numMs
+  let prefix = ''
   if (ms < 0) {
-    throw new Error('Milliseconds cannot be negative')
+    prefix = '-'
+    ms = Math.abs(ms)
   }
 
   const msPerSecond = 1000
@@ -96,7 +98,7 @@ function formatMs(numMs: number): string {
   ms -= minutes * msPerMinute
   const seconds = Math.floor(ms / msPerSecond)
 
-  let timeString = ''
+  let timeString = prefix
   if (days > 0) timeString += `${days}d `
   if (hours > 0) timeString += `${hours}h `
   if (minutes > 0) timeString += `${minutes}m `
