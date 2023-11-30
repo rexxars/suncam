@@ -8,11 +8,11 @@ scheduleTasks()
     logger.info('Tasks scheduled')
   })
   .catch((err) => {
-    logger.error('Error in scheduling tasks:', err)
+    logger.error('Error in scheduling tasks: %s', err.message)
   })
 
 async function scheduleTasks(date: Date = new Date()) {
-  logger.info('Scheduling tasks for', date.toISOString().slice(0, 10))
+  logger.info('Scheduling tasks for %s', date.toISOString().slice(0, 10))
 
   try {
     const {sunrise, sunset, solarNoon} = await getSunTimes(
