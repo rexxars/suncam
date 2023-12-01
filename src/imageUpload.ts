@@ -64,7 +64,7 @@ async function uploadImageToGCS(
   }
 }
 
-export async function retrieveImage(url: string): Promise<Buffer> {
+async function retrieveImage(url: string): Promise<Buffer> {
   const response = await fetch(url)
   const arrayBuffer = await response.arrayBuffer()
   return Buffer.from(arrayBuffer)
