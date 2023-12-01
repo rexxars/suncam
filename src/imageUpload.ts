@@ -1,13 +1,8 @@
 import {fetch} from 'undici'
-import {Storage} from '@google-cloud/storage'
 import {getMessageFromError, logger} from './logger'
 import {config} from './config'
+import {storageBucket} from './storage'
 
-const storage = new Storage({
-  projectId: config.gcs.projectId,
-  keyFilename: config.gcs.keyFile,
-})
-const bucketName = config.gcs.bucketName
 const imageUrl = config.imageUrl
 
 export async function fetchAndUploadImage(
@@ -53,7 +48,7 @@ async function uploadImageToGCS(
   imageBuffer: Buffer,
   fileName: string,
 ): Promise<void> {
-  const file = storage.bucket(bucketName).file(fileName)
+  const file = storageBucket.file(fileName)
   const options = {
     metadata: {
       contentType: 'image/jpeg',
@@ -62,14 +57,14 @@ async function uploadImageToGCS(
 
   try {
     await file.save(imageBuffer, options)
-    logger.info(`${fileName} uploaded to ${bucketName}.`)
+    logger.info(`${fileName} uploaded to GCS.`)
   } catch (error) {
     logger.error('Error uploading to GCS: %s', getMessageFromError(error))
     throw error
   }
 }
 
-async function retrieveImage(url: string): Promise<Buffer> {
+export async function retrieveImage(url: string): Promise<Buffer> {
   const response = await fetch(url)
   const arrayBuffer = await response.arrayBuffer()
   return Buffer.from(arrayBuffer)
