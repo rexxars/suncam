@@ -1,6 +1,6 @@
 import {fetch} from 'undici'
 import {Storage} from '@google-cloud/storage'
-import {logger} from './logger'
+import {getMessageFromError, logger} from './logger'
 import {config} from './config'
 
 const storage = new Storage({
@@ -64,7 +64,7 @@ async function uploadImageToGCS(
     await file.save(imageBuffer, options)
     logger.info(`${fileName} uploaded to ${bucketName}.`)
   } catch (error) {
-    logger.error('Error uploading to GCS:', error)
+    logger.error('Error uploading to GCS: %s', getMessageFromError(error))
     throw error
   }
 }
