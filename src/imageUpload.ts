@@ -1,6 +1,7 @@
+import {find} from 'geo-tz'
 import {fetch} from 'undici'
-import {getMessageFromError, logger} from './logger'
 import {config} from './config'
+import {getMessageFromError, logger} from './logger'
 import {storageBucket} from './storage'
 
 const imageUrl = config.imageUrl
@@ -34,14 +35,23 @@ export async function fetchAndUploadImage(
 }
 
 function formatFileName(date: Date, event: string): string {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
+  const [timeZone] = find(config.latitude, config.longitude)
+  const {year, month, day} = new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    timeZone,
+  })
+    .formatToParts(date)
+    .reduce(
+      (acc, part) => {
+        acc[part.type] = part.value
+        return acc
+      },
+      {} as {[key: string]: string},
+    )
 
-  const formattedMonth = month < 10 ? `0${month}` : `${month}`
-  const formattedDay = day < 10 ? `0${day}` : `${day}`
-
-  return `${year}-${formattedMonth}/${formattedDay}-${event}.jpg`
+  return `${year}-${month}/${day}-${event}.jpg`
 }
 
 async function uploadImageToGCS(
