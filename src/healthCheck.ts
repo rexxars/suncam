@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-process-exit */
-import {config} from './config'
+import {getPhotoFromWebCam} from './fswebcam'
 import {storageBucket} from './storage'
 
 export async function doHealthCheck(): Promise<void> {
@@ -14,25 +14,21 @@ export async function doHealthCheck(): Promise<void> {
   }
 
   try {
-    console.log('Image URL: Checking...')
+    console.log('Image: Checking...')
     await checkImage()
-    console.log('Image URL: Healthy')
+    console.log('Image: Healthy')
   } catch (err) {
-    console.error('Failed to retrieve image from %s', config.imageUrl)
     console.error(err)
     process.exit(1)
   }
 }
 
 async function checkImage() {
-  const response = await fetch(config.imageUrl)
-  if (!response.ok) {
-    throw new Error(`Received ${response.status} from ${config.imageUrl}`)
-  }
-
-  const type = response.headers.get('content-type')
-  if (!type || !type.startsWith('image/')) {
-    throw new Error(`Received ${type} from ${config.imageUrl}`)
+  try {
+    await getPhotoFromWebCam()
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : `${err}`
+    throw new Error(`Failed to get image from webcam: ${msg}`)
   }
 }
 

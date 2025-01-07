@@ -1,10 +1,8 @@
 import {find} from 'geo-tz'
-import {fetch} from 'undici'
 import {config} from './config'
 import {getMessageFromError, logger} from './logger'
 import {storageBucket} from './storage'
-
-const imageUrl = config.imageUrl
+import {getPhotoFromWebCam} from './fswebcam'
 
 export async function fetchAndUploadImage(
   event: 'sunrise' | 'sunset' | 'solarNoon',
@@ -15,7 +13,7 @@ export async function fetchAndUploadImage(
     try {
       const now = new Date()
       const fileName = formatFileName(now, event)
-      const imageBuffer = await retrieveImage(imageUrl)
+      const imageBuffer = await retrieveImage()
 
       await uploadImageToGCS(imageBuffer, fileName)
     } catch (error) {
@@ -74,8 +72,7 @@ async function uploadImageToGCS(
   }
 }
 
-async function retrieveImage(url: string): Promise<Buffer> {
-  const response = await fetch(url)
-  const arrayBuffer = await response.arrayBuffer()
-  return Buffer.from(arrayBuffer)
+async function retrieveImage(): Promise<Buffer> {
+  const image = await getPhotoFromWebCam()
+  return image
 }
