@@ -16,6 +16,10 @@ function getArgsFromConfig() {
     args.push('--skip', `${config.fswebcam.skip}`)
   }
 
+  if (!config.fswebcam.banner) {
+    args.push('--no-banner')
+  }
+
   if (config.fswebcam.delay) {
     args.push('--delay', `${config.fswebcam.delay}`)
   }
