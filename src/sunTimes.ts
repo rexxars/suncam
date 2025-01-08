@@ -28,7 +28,7 @@ export async function getSunTimes(
   longitude: number,
   date: Date,
 ): Promise<SunTimes> {
-  const formattedDate = date.toISOString().split('T')[0] // Format date as 'YYYY-MM-DD'
+  const formattedDate = formatAsYmd(date) // Format date as 'YYYY-MM-DD'
   const url = `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&date=${formattedDate}&formatted=0`
 
   try {
@@ -97,4 +97,16 @@ function assertApiResponseShape(
       'Invalid API response: Solar noon field is missing or not a string',
     )
   }
+}
+
+function zeroPad(num: number): string {
+  return num.toString().padStart(2, '0')
+}
+
+function formatAsYmd(date: Date) {
+  return [
+    date.getFullYear(),
+    zeroPad(date.getMonth() + 1),
+    zeroPad(date.getDate()),
+  ].join('-')
 }

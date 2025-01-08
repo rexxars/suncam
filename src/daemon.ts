@@ -12,7 +12,7 @@ scheduleTasks()
   })
 
 async function scheduleTasks(date: Date = new Date()) {
-  logger.info('Scheduling tasks for %s', date.toISOString().slice(0, 10))
+  logger.info('Scheduling tasks for %s', date.toDateString())
 
   const {sunrise, sunset, solarNoon} = await getSunTimes(
     config.latitude,
@@ -39,8 +39,20 @@ async function scheduleTasks(date: Date = new Date()) {
   nextDay.setDate(date.getDate() + 1)
 
   // Do another scheduling 30 minutes after sunset
-  const nextScheduleMs = calculateTimeout(sunset) + 30 * 60 * 1000
-  schedule(() => scheduleTasks(nextDay), nextScheduleMs)
+  const nextScheduleOffset = 30 * 60 * 1000
+  const nextScheduleMs = calculateTimeout(sunset) + nextScheduleOffset
+
+  if (nextScheduleMs > 0) {
+    logger.info(
+      'Next task scheduling will be run in %s (%s after sunset)',
+      formatMs(nextScheduleMs),
+      formatMs(nextScheduleOffset),
+    )
+    schedule(() => scheduleTasks(nextDay), nextScheduleMs)
+  } else {
+    logger.info('We are past sunset - scheduling tasks for tomorrow')
+    scheduleTasks(nextDay)
+  }
 }
 
 function schedule(fn: () => any, timeoutMs: number) {
