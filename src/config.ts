@@ -12,7 +12,7 @@ export const config = {
   },
 
   fswebcam: {
-    device: process.env['FSWEBCAM_DEVICE'] || '/dev/video0',
+    device: process.env['FSWEBCAM_DEVICE'] || '',
     resolution: process.env['FSWEBCAM_RESOLUTION'] || '1920x1080',
     skip: intVal(process.env['FSWEBCAM_SKIP'], 60),
     delay: intVal(process.env['FSWEBCAM_DELAY'], 1),
